@@ -1,0 +1,32 @@
+% Circuit
+L = 1.485e-5;     % Buck phase inductance (H)
+C = 10e-6;        % Output capacitance (F)
+Rcs = 1.5e-3;     % Current sensing resistor (ohms)
+ESR = 1.5e-3;     % Inductor eSR (ohms)
+R = 2.5;          % Load resistances (ohms)
+
+fSw = 1e6;        % Switching frequency (Hz)
+Ts = 1/fSw;       % Switching period (s)
+tDead = 2e-9;     % Deadtime (s)
+
+% Current controller
+Ri.F = fSw;
+Ri.Ts = 1/Ri.F; 
+Ri.Tp = Ri.Ts/2.0;
+
+Ri.Ti = 2/(ESR+Rcs)*Ri.Tp; 
+Ri.Tn = L/(ESR+Rcs);
+
+Ri.Kp = Ri.Tn/Ri.Ti;
+Ri.Ki = 1/Ri.Ti;
+
+% Voltage controller
+Rv.F = Ri.F / 10;
+Rv.Ts = 1/Rv.F;     % Sample time
+Rv.Tp = Rv.Ts/2*10; % Equivalent delay
+
+Rv.Ti = 8/C*Rv.Tp*Rv.Tp;
+Rv.Tn = 4*Rv.Tp;
+
+Rv.Kp = Rv.Tn/Rv.Ti;
+Rv.Ki = 1/Rv.Ti;
